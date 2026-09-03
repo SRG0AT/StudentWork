@@ -244,264 +244,29 @@
     if (_buf.length > _S.length) _buf = _buf.slice(-_S.length);
     if (_buf.length === _S.length && _buf.every((v, i) => v === _S[i])) {
       _buf = [];
-      _openBlank();
+      _go();
     }
   }
 
-  function _gateBoot() {
-    document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("keydown", e => {
-      if (e.key === "F12") e.preventDefault();
-      if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) e.preventDefault();
-      if (e.ctrlKey && (e.key === "u" || e.key === "U")) e.preventDefault();
-    });
-
-    const form = document.getElementById("f");
-    const inp = document.getElementById("i");
-    const err = document.getElementById("e");
-    const stat = document.getElementById("s");
-    const pw = document.getElementById("pw");
-    const pf = document.getElementById("pf");
-    const po = document.getElementById("po");
-    const openBtn = document.getElementById("o");
-    const qs = document.getElementById("qs");
-    let verified = null;
-    let debounce = 0;
-    let gen = 0;
-
-    const PRESETS = [
-      { g: "Destacado", items: [
-        { n: "Truffled \u2605", u: "https://truffled.lol/", best: true }
-      ]},
-      { g: "Games", items: [
-        { n: "2048", u: "https://play2048.co/" },
-        { n: "Snake", u: "https://playsnake.org/" },
-        { n: "Lichess", u: "https://lichess.org/" },
-        { n: "Minesweeper", u: "https://minesweeper.online/" },
-        { n: "HTML5 Games", u: "https://html5games.com/" },
-        { n: "Two Player", u: "https://www.twoplayergames.org/" },
-        { n: "Silver Games", u: "https://www.silvergames.com/" },
-        { n: "Retro Games", u: "https://www.retrogames.cc/" }
-      ]},
-      { g: "Stream / radio", items: [
-        { n: "Radio Garden", u: "https://radio.garden/" },
-        { n: "SomaFM", u: "https://somafm.com/" },
-        { n: "Internet Radio", u: "https://www.internet-radio.com/" },
-        { n: "Mixcloud", u: "https://www.mixcloud.com/" },
-        { n: "Archive", u: "https://archive.org/" }
-      ]}
-    ];
-
-    PRESETS.forEach(group => {
-      const lab = document.createElement("div");
-      lab.className = "lab";
-      lab.textContent = group.g;
-      qs.appendChild(lab);
-      group.items.forEach(item => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.textContent = item.n;
-        if (item.best) b.className = "best";
-        b.addEventListener("click", () => {
-          inp.value = item.u;
-          clearTimeout(debounce);
-          doCheck(item.u);
-        });
-        qs.appendChild(b);
-      });
-    });
-
-    function clearPreview() {
-      verified = null;
-      openBtn.disabled = true;
-      po.classList.remove("on");
-    }
-
-    function validate(raw) {
-      const t = raw.trim();
-      if (!t) return { ok: false, msg: "Introduce una URL." };
-      let c = t;
-      if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(c)) c = "https://" + c;
-      let p;
-      try { p = new URL(c); } catch { return { ok: false, msg: "La URL no es v\u00e1lida." }; }
-      if (p.protocol !== "http:" && p.protocol !== "https:") return { ok: false, msg: "Solo http:// o https://." };
-      if (!p.hostname || !p.hostname.includes(".")) return { ok: false, msg: "La URL no es v\u00e1lida." };
-      return { ok: true, url: p.href };
-    }
-
-    function doCheck(url) {
-      const my = ++gen;
-      clearPreview();
-      err.textContent = "";
-      stat.className = "st ld";
-      stat.textContent = "Comprobando conexi\u00f3n\u2026";
-      pw.classList.add("on");
-      pf.src = "about:blank";
-      setTimeout(() => {
-        if (my !== gen) return;
-        let loaded = false;
-        const onLoad = () => {
-          if (my !== gen) return;
-          loaded = true;
-          pf.removeEventListener("load", onLoad);
-          let blocked = false;
-          try {
-            const doc = pf.contentDocument;
-            if (doc && doc.body && doc.documentElement.innerHTML.length < 50 && !doc.body.innerText.trim()) blocked = true;
-          } catch { blocked = false; }
-          if (blocked) {
-            po.classList.add("on");
-            stat.className = "st fl";
-            stat.textContent = "Esta p\u00e1gina bloquea el iframe";
-            openBtn.disabled = true;
-          } else {
-            po.classList.remove("on");
-            stat.className = "st ok";
-            stat.textContent = "Conexi\u00f3n aceptada \u2014 listo para lanzar";
-            verified = url;
-            openBtn.disabled = false;
-          }
-        };
-        pf.addEventListener("load", onLoad);
-        pf.src = url;
-        setTimeout(() => {
-          if (my !== gen || loaded) return;
-          pf.removeEventListener("load", onLoad);
-          po.classList.add("on");
-          stat.className = "st fl";
-          stat.textContent = "Tiempo agotado \u2014 no responde";
-          openBtn.disabled = true;
-        }, 8000);
-      }, 40);
-    }
-
-    function scheduleCheck() {
-      clearTimeout(debounce);
-      clearPreview();
-      err.textContent = "";
-      const raw = inp.value.trim();
-      if (!raw) {
-        stat.className = "st";
-        stat.textContent = "";
-        pw.classList.remove("on");
-        pf.src = "";
-        return;
-      }
-      const v = validate(raw);
-      if (!v.ok) {
-        stat.className = "st";
-        stat.textContent = "";
-        return;
-      }
-      stat.className = "st ld";
-      stat.textContent = "Esperando para verificar\u2026";
-      debounce = setTimeout(() => doCheck(v.url), 500);
-    }
-
-    inp.addEventListener("input", scheduleCheck);
-    inp.addEventListener("paste", () => setTimeout(scheduleCheck, 0));
-    inp.addEventListener("change", () => {
-      const v = validate(inp.value);
-      if (v.ok) {
-        clearTimeout(debounce);
-        doCheck(v.url);
-      }
-    });
-
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      if (!verified) {
-        const v = validate(inp.value);
-        if (!v.ok) { err.textContent = v.msg; return; }
-        doCheck(v.url);
-        return;
-      }
-      const win = window.open();
-      if (!win) { err.textContent = "Ventana emergente bloqueada."; return; }
-      try { win.opener = null; } catch (err2) { /* ignore */ }
-      win.document.body.style.margin = "0";
-      win.document.body.style.padding = "0";
-      win.document.body.style.height = "100vh";
-      win.document.body.style.overflow = "hidden";
-      win.document.body.style.background = "#000";
-      const iframe = win.document.createElement("iframe");
-      iframe.style.border = "none";
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      iframe.style.margin = "0";
-      iframe.style.position = "fixed";
-      iframe.style.top = "0";
-      iframe.style.left = "0";
-      iframe.style.right = "0";
-      iframe.style.bottom = "0";
-      iframe.referrerPolicy = "no-referrer";
-      iframe.allow = "accelerometer; autoplay; camera; encrypted-media; gyroscope; clipboard-write; fullscreen; picture-in-picture; display-capture; geolocation; microphone";
-      iframe.setAttribute("allowfullscreen", "");
-      iframe.src = verified;
-      win.document.body.appendChild(iframe);
-    });
-
-    setTimeout(() => {
-      inp.value = "https://truffled.lol/";
-      inp.focus();
-      doCheck("https://truffled.lol/");
-    }, 80);
+  function _go() {
+    const win = window.open();
+    if (!win) return;
+    try { win.opener = null; } catch (e) { /* ignore */ }
+    const b = win.document.body;
+    b.style.margin = "0";
+    b.style.padding = "0";
+    b.style.height = "100vh";
+    b.style.overflow = "hidden";
+    b.style.background = "#000";
+    const f = win.document.createElement("iframe");
+    f.style.cssText = "border:none;width:100%;height:100%;margin:0;position:fixed;inset:0";
+    f.referrerPolicy = "no-referrer";
+    f.allow = "accelerometer; autoplay; camera; encrypted-media; gyroscope; clipboard-write; fullscreen; picture-in-picture";
+    f.setAttribute("allowfullscreen", "");
+    f.src = atob("aHR0cHM6Ly90cnVmZmxlZC5sb2wv");
+    b.appendChild(f);
   }
 
-  function _openBlank() {
-    const w = window.open("", "_blank");
-    if (!w) return;
-    const theme = document.documentElement.getAttribute("data-theme") || "dark";
-    w.document.open();
-    w.document.write(
-      "<!DOCTYPE html><html data-theme='" + theme + "'><head><meta charset='UTF-8'>" +
-      "<meta name='viewport' content='width=device-width,initial-scale=1'>" +
-      "<title></title><style>" +
-      ":root{--bg:#14151a;--surface:#1d1e25;--s2:#262832;--s3:#2f313d;--text:#f2f1ed;--dim:#93949e;--eq:#6ee7c9;--eqt:#0a1f1a;--danger:#ff6b6b}" +
-      ":root[data-theme=light]{--bg:#f3f2ee;--surface:#fff;--s2:#edece7;--s3:#e2e1da;--text:#1b1c20;--dim:#6c6d76;--eq:#128a6e;--eqt:#f0fffa}" +
-      "*{box-sizing:border-box}" +
-      "html,body{height:100%;margin:0;background:radial-gradient(900px 420px at 20% -10%,color-mix(in srgb,var(--eq) 14%,transparent),transparent 55%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;overflow:auto}" +
-      "body::before{content:'';position:fixed;inset:-20%;background:radial-gradient(circle at 80% 120%,color-mix(in srgb,var(--eq) 10%,transparent),transparent 40%);animation:drift 12s ease-in-out infinite alternate;pointer-events:none}" +
-      "@keyframes drift{from{transform:translate3d(-2%,-1%,0)}to{transform:translate3d(3%,2%,0)}}" +
-      "@keyframes rise{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}" +
-      "@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}" +
-      ".c{position:relative;width:min(94vw,460px);background:var(--surface);border:1px solid var(--s3);border-radius:26px;padding:28px 24px 24px;box-shadow:0 30px 60px -25px rgba(0,0,0,.55);animation:rise .55s cubic-bezier(.22,1,.36,1);margin:24px 0}" +
-      "h1{font-size:1.3rem;margin:0 0 6px;animation:rise .6s .05s both}p{font-size:.86rem;color:var(--dim);margin:0 0 14px;animation:rise .6s .1s both}" +
-      ".qs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;animation:rise .6s .12s both}" +
-      ".lab{width:100%;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin:6px 0 0}" +
-      ".qs button{flex:none;padding:7px 11px;font-size:.75rem;border-radius:999px;background:var(--s2);color:var(--text);font-weight:600}" +
-      ".qs button.best{flex:1 1 100%;padding:12px 14px;border-radius:12px;background:var(--eq);color:var(--eqt);font-size:.92rem;letter-spacing:.01em;box-shadow:0 8px 20px -12px var(--eq)}" +
-      "input{width:100%;background:var(--s2);border:1px solid var(--s3);color:var(--text);border-radius:12px;padding:13px 14px;font-size:.95rem;outline:none;transition:border-color .2s ease,box-shadow .2s ease}" +
-      "input:focus{border-color:var(--eq);box-shadow:0 0 0 4px color-mix(in srgb,var(--eq) 22%,transparent)}" +
-      ".er{min-height:18px;color:var(--danger);font-size:.78rem;margin-top:6px;transition:opacity .2s ease}" +
-      ".st{min-height:22px;font-size:.82rem;margin-top:4px;transition:color .2s ease,opacity .2s ease}.st.ok{color:var(--eq)}.st.fl{color:var(--danger)}.st.ld{color:var(--dim)}" +
-      ".st.ld::before{content:'';display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;background:var(--eq);animation:pulse 1s ease infinite;vertical-align:middle}" +
-      "@keyframes pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}" +
-      ".pw{max-height:0;opacity:0;transform:translateY(-8px);overflow:hidden;position:relative;width:100%;border-radius:10px;border:1px solid transparent;margin-top:0;background:var(--s2);transition:max-height .45s ease,opacity .35s ease,transform .35s ease,margin .35s ease,border-color .35s ease}" +
-      ".pw.on{max-height:230px;opacity:1;transform:none;margin-top:8px;border-color:var(--s3);aspect-ratio:16/10;animation:pop .4s ease}" +
-      "iframe{width:300%;height:300%;border:none;transform:scale(.3333);transform-origin:top left}" +
-      ".ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);color:var(--danger);font-size:.82rem;font-weight:600;text-align:center;padding:10px;opacity:0;pointer-events:none;transition:opacity .3s ease}" +
-      ".ov.on{opacity:1;pointer-events:auto}" +
-      ".bb{display:flex;gap:10px;margin-top:12px}" +
-      "button{flex:1;padding:14px 0;border:none;border-radius:12px;font-weight:600;font-size:.98rem;cursor:pointer;transition:transform .15s ease,filter .15s ease,opacity .2s ease,box-shadow .2s ease}" +
-      "button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}" +
-      "button:active:not(:disabled){transform:scale(.97)}" +
-      "#o{background:var(--eq);color:var(--eqt);box-shadow:0 8px 20px -12px var(--eq);width:100%}#o:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none}" +
-      "@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}" +
-      "</style></head><body><div class='c'><h1>Abrir direcci\u00f3n</h1>" +
-      "<p>Recomendado: Truffled. Elige un atajo o pega otra URL \u2014 se verifica sola.</p>" +
-      "<div class='qs' id='qs'></div>" +
-      "<form id='f' autocomplete='off'><input id='i' type='text' placeholder='https://truffled.lol/' spellcheck='false'>" +
-      "<div class='er' id='e'></div><div class='st' id='s'></div>" +
-      "<div class='pw' id='pw'><iframe id='pf'></iframe>" +
-      "<div class='ov' id='po'>Esta p\u00e1gina bloquea la carga en iframe</div></div>" +
-      "<div class='bb'><button type='submit' id='o' disabled>Lanzar</button></div>" +
-      "</form></div><script>(" + _gateBoot.toString() + ")();<\/script></body></html>"
-    );
-    w.document.close();
-  }
-
-  /* ---------- Periodic table ---------- */
   const CATS = {
     alkali: "Alkali metal",
     alkaline: "Alkaline earth",
