@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helix Desk — Free Calculator, Periodic Table & Student Reference</title>
+<meta name="description" content="Free online calculator with scientific mode, interactive periodic table, math and physics formulas, unit conversions, and study constants. No account required." />
+<meta name="theme-color" content="#14151a" />
+<meta name="application-name" content="Helix Desk" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d1e25'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='16' font-family='system-ui' fill='%236ee7c9'%3E%3D%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#home">
+    <span class="brand-mark" aria-hidden="true">=</span>
+    <span>
+      <strong>Helix Desk</strong>
+      <small>student toolkit</small>
+    </span>
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#calculator">Calculator</a>
+    <a href="#periodic">Periodic table</a>
+    <a href="#formulas">Formulas</a>
+    <a href="#conversions">Conversions</a>
+    <a href="#constants">Constants</a>
+    <a href="#help">Help</a>
+  </nav>
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Switch light or dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z"/></svg>
+  </button>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <p class="eyebrow">Free · No sign-in · Works offline in your browser</p>
+    <h1>Calculator and science desk for homework</h1>
+    <p class="lede">A standard and scientific calculator, a full periodic table, and the formulas students actually look up: algebra, geometry, trig, physics, chemistry, SI prefixes, and unit conversions. History and theme stay on this device.</p>
+  </section>
+
+  <section class="workspace" id="calculator" aria-label="Calculator">
+    <div class="calc" id="calc">
+      <div class="calc-toolbar">
+        <div class="mode-switch" role="tablist" aria-label="Calculator mode">
+          <button type="button" class="mode-btn is-active" data-mode="basic" role="tab" aria-selected="true">Standard</button>
+          <button type="button" class="mode-btn" data-mode="sci" role="tab" aria-selected="false">Scientific</button>
+        </div>
+        <div class="toolbar-actions">
+          <span class="mem-badge" id="memBadge">M</span>
+          <button type="button" class="text-btn" id="copyBtn" title="Copy result">Copy</button>
+        </div>
+      </div>
+
+      <div class="display" id="display">
+        <div class="display-expression" id="expression" aria-hidden="true">&nbsp;</div>
+        <div class="display-result" id="result">0</div>
+      </div>
+
+      <div class="mem-row">
+        <button class="key key-mem" data-action="mc" title="Memory clear">MC</button>
+        <button class="key key-mem" data-action="mr" title="Memory recall">MR</button>
+        <button class="key key-mem" data-action="mplus" title="Memory add">M+</button>
+        <button class="key key-mem" data-action="mminus" title="Memory subtract">M−</button>
+        <button class="key key-mem" data-action="ms" title="Memory store">MS</button>
+      </div>
+
+      <div class="sci-row" id="sciRow">
+        <button class="key key-fn" data-action="sqrt" title="Square root">√</button>
+        <button class="key key-fn" data-action="square" title="Square">x²</button>
+        <button class="key key-fn" data-action="invert" title="Reciprocal">1/x</button>
+        <button class="key key-fn" data-action="pi" title="Pi">π</button>
+      </div>
+
+      <div class="keys" id="keys">
+        <button class="key key-fn" data-action="percent">%</button>
+        <button class="key key-fn" data-action="ce" title="Clear entry">CE</button>
+        <button class="key key-fn" data-action="clear" title="All clear">AC</button>
+        <button class="key key-fn" data-action="backspace" title="Backspace">⌫</button>
+
+        <button class="key key-num" data-num="7">7</button>
+        <button class="key key-num" data-num="8">8</button>
+        <button class="key key-num" data-num="9">9</button>
+        <button class="key key-op" data-action="op" data-op="÷">÷</button>
+
+        <button class="key key-num" data-num="4">4</button>
+        <button class="key key-num" data-num="5">5</button>
+        <button class="key key-num" data-num="6">6</button>
+        <button class="key key-op" data-action="op" data-op="×">×</button>
+
+        <button class="key key-num" data-num="1">1</button>
+        <button class="key key-num" data-num="2">2</button>
+        <button class="key key-num" data-num="3">3</button>
+        <button class="key key-op" data-action="op" data-op="−">&minus;</button>
+
+        <button class="key key-fn" data-action="negate">+/−</button>
+        <button class="key key-num" data-num="0">0</button>
+        <button class="key key-num" data-action="decimal">.</button>
+        <button class="key key-eq" data-action="equals">=</button>
+      </div>
+
+      <p class="hint">Keyboard: numbers, + − * / %, Enter, Backspace, Esc. Period and comma both work as a decimal point.</p>
+    </div>
+
+    <aside class="side" aria-label="History and shortcuts">
+      <div class="side-card">
+        <div class="side-head">
+          <h2>History</h2>
+          <button type="button" class="text-btn" id="clearHistory">Clear</button>
+        </div>
+        <p class="side-note">Stored only in this browser. Nothing is uploaded.</p>
+        <div class="history" id="history" aria-live="polite"></div>
+        <p class="history-empty" id="historyEmpty">No calculations yet.</p>
+      </div>
+      <div class="side-card tips">
+        <h2>Shortcuts</h2>
+        <ul>
+          <li><kbd>Enter</kbd> equals</li>
+          <li><kbd>Esc</kbd> all clear</li>
+          <li><kbd>⌫</kbd> delete digit</li>
+          <li><kbd>%</kbd> percent</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  <section class="ref-block" id="periodic">
+    <div class="ref-head">
+      <h2>Periodic table</h2>
+      <p>All 118 elements. Click a cell for name, atomic number, mass, and a short student note. Use mass sends the atomic mass into the calculator.</p>
+    </div>
+    <div class="pt-legend" id="ptLegend"></div>
+    <div class="pt-wrap">
+      <div class="pt-grid" id="ptGrid"></div>
+    </div>
+    <div class="pt-detail" id="ptDetail">
+      <p class="muted">Select an element to see details.</p>
+    </div>
+  </section>
+
+  <section class="ref-block" id="formulas">
+    <h2>Formula sheet</h2>
+    <p class="section-lead">The identities and equations that show up most in middle school, high school, and first-year college work.</p>
+
+    <h3 class="subhead">Algebra</h3>
+    <div class="faq">
+      <article>
+        <h3>Linear equation</h3>
+        <p class="formula">ax + b = 0 → x = −b / a</p>
+        <p>Slope-intercept form: y = mx + b, where m is slope and b is the y-intercept.</p>
+      </article>
+      <article>
+        <h3>Quadratic formula</h3>
+        <p class="formula">x = (−b ± √(b² − 4ac)) / 2a</p>
+        <p>Discriminant D = b² − 4ac. D &gt; 0 two real roots, D = 0 one root, D &lt; 0 complex roots.</p>
+      </article>
+      <article>
+        <h3>Exponent rules</h3>
+        <p class="formula">aᵐ · aⁿ = aᵐ⁺ⁿ &nbsp; (aᵐ)ⁿ = aᵐⁿ &nbsp; a⁻ⁿ = 1/aⁿ</p>
+        <p>a⁰ = 1 (a ≠ 0). √a = a^(1/2). Change of base: log_b a = ln a / ln b.</p>
+      </article>
+      <article>
+        <h3>Logarithms</h3>
+        <p class="formula">log(ab) = log a + log b &nbsp; log(a/b) = log a − log b</p>
+        <p>log(aⁿ) = n log a. Natural log ln is log base e. Common log is base 10.</p>
+      </article>
+    </div>
+
+    <h3 class="subhead">Geometry</h3>
+    <div class="faq">
+      <article>
+        <h3>Areas</h3>
+        <p>Rectangle: lw. Triangle: ½bh. Circle: πr². Trapezoid: ½(a+b)h. Parallelogram: bh.</p>
+      </article>
+      <article>
+        <h3>Volumes</h3>
+        <p>Box: lwh. Cylinder: πr²h. Sphere: ⁴⁄₃πr³. Cone: ⅓πr²h. Pyramid: ⅓Bh.</p>
+      </article>
+      <article>
+        <h3>Pythagorean theorem</h3>
+        <p class="formula">a² + b² = c²</p>
+        <p>Distance between (x₁,y₁) and (x₂,y₂): √((x₂−x₁)² + (y₂−y₁)²).</p>
+      </article>
+      <article>
+        <h3>Circle facts</h3>
+        <p>Circumference C = 2πr. Arc length = θr (θ in radians). Sector area = ½r²θ.</p>
+      </article>
+    </div>
+
+    <h3 class="subhead">Trigonometry</h3>
+    <div class="faq">
+      <article>
+        <h3>SOH-CAH-TOA</h3>
+        <p class="formula">sin θ = opp/hyp &nbsp; cos θ = adj/hyp &nbsp; tan θ = opp/adj</p>
+        <p>csc = 1/sin, sec = 1/cos, cot = 1/tan.</p>
+      </article>
+      <article>
+        <h3>Identities</h3>
+        <p class="formula">sin²θ + cos²θ = 1</p>
+        <p>1 + tan²θ = sec²θ. sin(2θ) = 2 sinθ cosθ. cos(2θ) = cos²θ − sin²θ.</p>
+      </article>
+      <article>
+        <h3>Law of sines / cosines</h3>
+        <p class="formula">a/sin A = b/sin B = c/sin C</p>
+        <p>c² = a² + b² − 2ab cos C. Use this for any triangle, not just right triangles.</p>
+      </article>
+      <article>
+        <h3>Radians</h3>
+        <p>180° = π rad. 1 rad ≈ 57.3°. Full circle = 2π rad = 360°. Unit circle: (cos θ, sin θ).</p>
+      </article>
+    </div>
+
+    <h3 class="subhead">Physics</h3>
+    <div class="faq">
+      <article>
+        <h3>Motion</h3>
+        <p class="formula">v = v₀ + at &nbsp; s = v₀t + ½at² &nbsp; v² = v₀² + 2as</p>
+        <p>Average speed = distance / time. Velocity is a vector; speed is not.</p>
+      </article>
+      <article>
+        <h3>Newton and energy</h3>
+        <p class="formula">F = ma &nbsp; W = Fd cosθ &nbsp; KE = ½mv² &nbsp; PE = mgh</p>
+        <p>Momentum p = mv. Impulse = Δp = FΔt. Power P = W/t = Fv.</p>
+      </article>
+      <article>
+        <h3>Waves and electricity</h3>
+        <p class="formula">v = fλ &nbsp; V = IR &nbsp; P = IV = I²R</p>
+        <p>Series resistors add. Parallel: 1/R = 1/R₁ + 1/R₂. Coulomb: F = kq₁q₂ / r².</p>
+      </article>
+      <article>
+        <h3>Gases and heat</h3>
+        <p class="formula">PV = nRT &nbsp; Q = mcΔT</p>
+        <p>STP is 0 °C and 1 atm. Specific heat of water is 4.184 J/g·°C.</p>
+      </article>
+    </div>
+
+    <h3 class="subhead">Chemistry</h3>
+    <div class="faq">
+      <article>
+        <h3>Moles</h3>
+        <p class="formula">n = m / M &nbsp; n = N / N<sub>A</sub> &nbsp; n = C · V</p>
+        <p>N<sub>A</sub> = 6.022 × 10²³ mol⁻¹. Molarity C is moles per liter of solution.</p>
+      </article>
+      <article>
+        <h3>Stoichiometry</h3>
+        <p>Balance the equation. Convert given grams → moles → mole ratio → desired grams. Limiting reactant is the one that runs out first.</p>
+      </article>
+      <article>
+        <h3>pH</h3>
+        <p class="formula">pH = −log[H⁺] &nbsp; pOH = −log[OH⁻] &nbsp; pH + pOH = 14</p>
+        <p>Acids pH &lt; 7, bases pH &gt; 7. Strong acids fully dissociate in water.</p>
+      </article>
+      <article>
+        <h3>Bonding quick read</h3>
+        <p>Ionic: metal + nonmetal, electrons transferred. Covalent: shared electrons. Metallic: delocalized electrons. Polar molecules have uneven charge.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="ref-block" id="conversions">
+    <h2>Unit conversions</h2>
+    <p class="section-lead">Exact or commonly used classroom values. Temperature is the one that is not a simple multiply.</p>
+    <div class="table-grid">
+      <div class="table-card">
+        <h3>Length</h3>
+        <table>
+          <tr><td>1 in</td><td>2.54 cm</td></tr>
+          <tr><td>1 ft</td><td>12 in = 0.3048 m</td></tr>
+          <tr><td>1 yd</td><td>3 ft = 0.9144 m</td></tr>
+          <tr><td>1 mi</td><td>1.60934 km</td></tr>
+          <tr><td>1 Å</td><td>10⁻¹⁰ m</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Mass</h3>
+        <table>
+          <tr><td>1 kg</td><td>2.20462 lb</td></tr>
+          <tr><td>1 lb</td><td>16 oz = 453.592 g</td></tr>
+          <tr><td>1 t (metric)</td><td>1000 kg</td></tr>
+          <tr><td>1 u (amu)</td><td>1.66054 × 10⁻²⁷ kg</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Volume</h3>
+        <table>
+          <tr><td>1 L</td><td>1000 mL = 0.001 m³</td></tr>
+          <tr><td>1 gal (US)</td><td>3.78541 L</td></tr>
+          <tr><td>1 qt</td><td>0.946353 L</td></tr>
+          <tr><td>1 cup</td><td>236.588 mL</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Temperature</h3>
+        <table>
+          <tr><td>°C → °F</td><td>F = 1.8C + 32</td></tr>
+          <tr><td>°F → °C</td><td>C = (F − 32) / 1.8</td></tr>
+          <tr><td>°C → K</td><td>K = C + 273.15</td></tr>
+          <tr><td>0 K</td><td>absolute zero</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Pressure & energy</h3>
+        <table>
+          <tr><td>1 atm</td><td>101325 Pa = 760 mmHg</td></tr>
+          <tr><td>1 bar</td><td>10⁵ Pa</td></tr>
+          <tr><td>1 cal</td><td>4.184 J</td></tr>
+          <tr><td>1 eV</td><td>1.602 × 10⁻¹⁹ J</td></tr>
+          <tr><td>1 kWh</td><td>3.6 × 10⁶ J</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>SI prefixes</h3>
+        <table>
+          <tr><td>giga (G)</td><td>10⁹</td></tr>
+          <tr><td>mega (M)</td><td>10⁶</td></tr>
+          <tr><td>kilo (k)</td><td>10³</td></tr>
+          <tr><td>centi (c)</td><td>10⁻²</td></tr>
+          <tr><td>milli (m)</td><td>10⁻³</td></tr>
+          <tr><td>micro (µ)</td><td>10⁻⁶</td></tr>
+          <tr><td>nano (n)</td><td>10⁻⁹</td></tr>
+          <tr><td>pico (p)</td><td>10⁻¹²</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="ref-block" id="constants">
+    <h2>Constants, Greek letters, and exam notes</h2>
+    <div class="table-grid">
+      <div class="table-card">
+        <h3>Physical constants</h3>
+        <table>
+          <tr><td>c</td><td>2.99792458 × 10⁸ m/s</td></tr>
+          <tr><td>g</td><td>9.80665 m/s² (standard)</td></tr>
+          <tr><td>G</td><td>6.674 × 10⁻¹¹ N·m²/kg²</td></tr>
+          <tr><td>h</td><td>6.626 × 10⁻³⁴ J·s</td></tr>
+          <tr><td>k</td><td>8.987 × 10⁹ N·m²/C²</td></tr>
+          <tr><td>e</td><td>1.602 × 10⁻¹⁹ C</td></tr>
+          <tr><td>R</td><td>8.314 J/mol·K</td></tr>
+          <tr><td>N<sub>A</sub></td><td>6.022 × 10²³ mol⁻¹</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Math constants</h3>
+        <table>
+          <tr><td>π</td><td>3.1415926535</td></tr>
+          <tr><td>e</td><td>2.7182818284</td></tr>
+          <tr><td>√2</td><td>1.4142135623</td></tr>
+          <tr><td>√3</td><td>1.7320508075</td></tr>
+          <tr><td>φ (golden)</td><td>1.6180339887</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Greek alphabet</h3>
+        <table>
+          <tr><td>α alpha</td><td>often angles, alpha particles</td></tr>
+          <tr><td>β beta</td><td>beta decay, coefficients</td></tr>
+          <tr><td>γ gamma</td><td>photons, Lorentz factor</td></tr>
+          <tr><td>Δ delta</td><td>change, discriminant</td></tr>
+          <tr><td>θ theta</td><td>angles</td></tr>
+          <tr><td>λ lambda</td><td>wavelength, eigenvalues</td></tr>
+          <tr><td>μ mu</td><td>micro, friction, mean</td></tr>
+          <tr><td>σ sigma</td><td>sum, stress, conductivity</td></tr>
+          <tr><td>ω omega</td><td>angular frequency</td></tr>
+        </table>
+      </div>
+      <div class="table-card">
+        <h3>Study reminders</h3>
+        <table>
+          <tr><td>Sig figs</td><td>multiply: fewest sig figs; add: fewest decimals</td></tr>
+          <tr><td>Vectors</td><td>break into x and y, then add components</td></tr>
+          <tr><td>Units</td><td>write them through the whole solution</td></tr>
+          <tr><td>Graphs</td><td>slope = rise/run; area under v–t is displacement</td></tr>
+          <tr><td>Lab</td><td>% error = |exp − acc| / acc × 100</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="info" id="help">
+    <h2>How Helix Desk works</h2>
+    <div class="faq">
+      <article>
+        <h3>Basic operations</h3>
+        <p>Enter the first number, pick an operator, enter the second number, press equals. You can chain + and − without pressing equals every time.</p>
+      </article>
+      <article>
+        <h3>Memory</h3>
+        <p>MS stores the display. M+ and M− add or subtract. MR recalls. MC clears. The M badge appears when memory is set.</p>
+      </article>
+      <article>
+        <h3>Scientific mode</h3>
+        <p>Adds square root, square, reciprocal, and π. Use the periodic table “Use mass” button to drop an atomic mass into the display.</p>
+      </article>
+      <article>
+        <h3>Privacy</h3>
+        <p>No account and no tracking cookies. History and theme are saved in local storage. Clearing site data removes them.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="privacy">
+  <div>
+    <strong>Helix Desk</strong>
+    <p>Free calculator and student reference. Results are rounded to 10 decimal places. This is a study aid, not a substitute for graded lab software or professional tools. Masses and constants are classroom-standard values.</p>
+  </div>
+  <div>
+    <p>Privacy: calculations stay in your browser. We do not send your history to a server.</p>
+    <p class="copy">© <span id="year">2026</span> Helix Desk · Updated September 2026</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
