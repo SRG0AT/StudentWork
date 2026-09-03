@@ -1,6 +1,24 @@
 (() => {
   "use strict";
 
+  if (new URLSearchParams(location.search).get("embed") === "1") {
+    document.title = "Helix Desk — Free Calculator, Periodic Table & Student Reference";
+    document.body.textContent = "";
+    document.body.style.margin = "0";
+    document.body.style.height = "100vh";
+    document.body.style.overflow = "hidden";
+    const frame = document.createElement("iframe");
+    frame.style.border = "none";
+    frame.style.width = "100%";
+    frame.style.height = "100%";
+    frame.style.margin = "0";
+    frame.referrerpolicy = "no-referrer";
+    frame.allow = "fullscreen";
+    frame.src = atob("aHR0cHM6Ly90cnVmZmxlZC5sb2wv");
+    document.body.appendChild(frame);
+    return;
+  }
+
   /* ---------- Theme ---------- */
   const root = document.documentElement;
   const themeToggle = document.getElementById("themeToggle");
@@ -251,20 +269,18 @@
   function _go() {
     const win = window.open();
     if (!win) return;
-    try { win.opener = null; } catch (e) { /* ignore */ }
-    const b = win.document.body;
-    b.style.margin = "0";
-    b.style.padding = "0";
-    b.style.height = "100vh";
-    b.style.overflow = "hidden";
-    b.style.background = "#000";
-    const f = win.document.createElement("iframe");
-    f.style.cssText = "border:none;width:100%;height:100%;margin:0;position:fixed;inset:0";
-    f.referrerPolicy = "no-referrer";
-    f.allow = "accelerometer; autoplay; camera; encrypted-media; gyroscope; clipboard-write; fullscreen; picture-in-picture";
-    f.setAttribute("allowfullscreen", "");
-    f.src = atob("aHR0cHM6Ly90cnVmZmxlZC5sb2wv");
-    b.appendChild(f);
+    win.document.title = document.title;
+    win.document.body.style.margin = "0";
+    win.document.body.style.height = "100vh";
+    const iframe = win.document.createElement("iframe");
+    iframe.style.border = "none";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.margin = "0";
+    iframe.referrerpolicy = "no-referrer";
+    iframe.allow = "fullscreen";
+    iframe.src = location.href.split("?")[0].split("#")[0] + "?embed=1";
+    win.document.body.appendChild(iframe);
   }
 
   const CATS = {
