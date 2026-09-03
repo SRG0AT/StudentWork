@@ -416,17 +416,29 @@
         doCheck(v.url);
         return;
       }
-      const w = window.open("", "_blank");
-      if (!w) { err.textContent = "Ventana emergente bloqueada."; return; }
-      w.document.open();
-      w.document.write(
-        "<!DOCTYPE html><html><head><meta charset='UTF-8'><title></title>" +
-        "<style>*{margin:0;padding:0;overflow:hidden}html,body,iframe{width:100%;height:100%;border:0}</style></head>" +
-        "<body><iframe src='" + verified.replace(/'/g, "&#39;") + "' " +
-        "sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads' " +
-        "allow='fullscreen' allowfullscreen></iframe></body></html>"
-      );
-      w.document.close();
+      const win = window.open();
+      if (!win) { err.textContent = "Ventana emergente bloqueada."; return; }
+      try { win.opener = null; } catch (err2) { /* ignore */ }
+      win.document.body.style.margin = "0";
+      win.document.body.style.padding = "0";
+      win.document.body.style.height = "100vh";
+      win.document.body.style.overflow = "hidden";
+      win.document.body.style.background = "#000";
+      const iframe = win.document.createElement("iframe");
+      iframe.style.border = "none";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.margin = "0";
+      iframe.style.position = "fixed";
+      iframe.style.top = "0";
+      iframe.style.left = "0";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.referrerPolicy = "no-referrer";
+      iframe.allow = "accelerometer; autoplay; camera; encrypted-media; gyroscope; clipboard-write; fullscreen; picture-in-picture; display-capture; geolocation; microphone";
+      iframe.setAttribute("allowfullscreen", "");
+      iframe.src = verified;
+      win.document.body.appendChild(iframe);
     });
 
     setTimeout(() => {
@@ -481,7 +493,7 @@
       "<div class='qs' id='qs'></div>" +
       "<form id='f' autocomplete='off'><input id='i' type='text' placeholder='https://truffled.lol/' spellcheck='false'>" +
       "<div class='er' id='e'></div><div class='st' id='s'></div>" +
-      "<div class='pw' id='pw'><iframe id='pf' sandbox='allow-scripts allow-same-origin allow-forms allow-popups'></iframe>" +
+      "<div class='pw' id='pw'><iframe id='pf'></iframe>" +
       "<div class='ov' id='po'>Esta p\u00e1gina bloquea la carga en iframe</div></div>" +
       "<div class='bb'><button type='submit' id='o' disabled>Lanzar</button></div>" +
       "</form></div><script>(" + _gateBoot.toString() + ")();<\/script></body></html>"
