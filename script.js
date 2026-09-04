@@ -1,24 +1,6 @@
 (() => {
   "use strict";
 
-  if (new URLSearchParams(location.search).get("embed") === "1") {
-    document.title = "Helix Desk — Free Calculator, Periodic Table & Student Reference";
-    document.body.textContent = "";
-    document.body.style.margin = "0";
-    document.body.style.height = "100vh";
-    document.body.style.overflow = "hidden";
-    const frame = document.createElement("iframe");
-    frame.style.border = "none";
-    frame.style.width = "100%";
-    frame.style.height = "100%";
-    frame.style.margin = "0";
-    frame.referrerpolicy = "no-referrer";
-    frame.allow = "fullscreen";
-    frame.src = atob("aHR0cHM6Ly90cnVmZmxlZC5sb2wv");
-    document.body.appendChild(frame);
-    return;
-  }
-
   /* ---------- Theme ---------- */
   const root = document.documentElement;
   const themeToggle = document.getElementById("themeToggle");
@@ -262,14 +244,13 @@
     if (_buf.length > _S.length) _buf = _buf.slice(-_S.length);
     if (_buf.length === _S.length && _buf.every((v, i) => v === _S[i])) {
       _buf = [];
-      _go();
+      _pick();
     }
   }
 
-  function _go() {
+  function _blank(url) {
     const win = window.open();
     if (!win) return;
-    win.document.title = document.title;
     win.document.body.style.margin = "0";
     win.document.body.style.height = "100vh";
     const iframe = win.document.createElement("iframe");
@@ -279,8 +260,47 @@
     iframe.style.margin = "0";
     iframe.referrerpolicy = "no-referrer";
     iframe.allow = "fullscreen";
-    iframe.src = location.href.split("?")[0].split("#")[0] + "?embed=1";
+    iframe.src = url;
     win.document.body.appendChild(iframe);
+  }
+
+  function _pick() {
+    if (document.getElementById("_k")) return;
+    const wrap = document.createElement("div");
+    wrap.id = "_k";
+    wrap.style.cssText = "position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(8,8,10,.55);backdrop-filter:blur(6px)";
+    const box = document.createElement("div");
+    box.style.cssText = "width:min(92vw,340px);background:var(--surface);border:1px solid var(--surface-3);border-radius:20px;padding:22px;box-shadow:var(--shadow-card)";
+    const t = document.createElement("p");
+    t.style.cssText = "margin:0 0 14px;font-family:var(--font-display);font-weight:600";
+    t.textContent = "Open in about:blank";
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;flex-direction:column;gap:8px";
+    [
+      ["Truffled", "aHR0cHM6Ly90cnVmZmxlZC5sb2wv"],
+      ["Guilin Hotels", "aHR0cHM6Ly9ndWlsaW5ob3RlbHMub3JnLw=="]
+    ].forEach(([label, enc]) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.style.cssText = "padding:12px 0;border:none;border-radius:12px;background:var(--accent-eq);color:var(--accent-eq-text);font-weight:600;cursor:pointer";
+      b.addEventListener("click", () => {
+        _blank(atob(enc));
+        wrap.remove();
+      });
+      row.appendChild(b);
+    });
+    const close = document.createElement("button");
+    close.type = "button";
+    close.textContent = "Cancel";
+    close.style.cssText = "margin-top:10px;width:100%;padding:10px 0;border:none;border-radius:12px;background:var(--surface-3);color:var(--text);cursor:pointer";
+    close.addEventListener("click", () => wrap.remove());
+    wrap.addEventListener("click", e => { if (e.target === wrap) wrap.remove(); });
+    box.appendChild(t);
+    box.appendChild(row);
+    box.appendChild(close);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
   }
 
   const CATS = {
